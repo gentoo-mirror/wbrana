@@ -43,7 +43,7 @@ fi
 SRC_URI="${RELEASE_URI}
 	!truetype? ( ${FONT_URI} )"
 
-DESCRIPTION="Media Player for Linux"
+DESCRIPTION="Media Player for Linux with modified equalizer"
 HOMEPAGE="http://www.mplayerhq.hu/"
 
 FONT_RDEPS="

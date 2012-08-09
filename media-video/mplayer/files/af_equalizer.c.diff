@@ -1,0 +1,75 @@
+--- libaf/af_equalizer.c.orig	2009-05-13 04:58:57.000000000 +0200
++++ libaf/af_equalizer.c	2010-03-09 22:03:10.000000000 +0100
+@@ -51,7 +51,7 @@
+    8	8.000 kHz
+    9 	16.00 kHz
+ */
+-#define CF  	{31.25,62.5,125,250,500,1000,2000,4000,8000,16000}
++#define CF     {23.4375,46.875,93.75,187.5,375,750,1500,3000,6000,12000}
+ 
+ // Maximum and minimum gain for the bands
+ #define G_MAX	+12.0
+@@ -60,9 +60,9 @@
+ // Data for specific instances of this filter
+ typedef struct af_equalizer_s
+ {
+-  float   a[KM][L];        	// A weights
+-  float   b[KM][L];	     	// B weights
+-  float   wq[AF_NCH][KM][L];  	// Circular buffer for W data
++  double   a[KM][L];        	// A weights
++  double  b[KM][L];	     	// B weights
++  double  wq[AF_NCH][KM][L];  	// Circular buffer for W data
+   float   g[AF_NCH][KM];      	// Gain factor for each channel and band
+   int     K; 		   	// Number of used eq bands
+   int     channels;        	// Number of channels
+@@ -70,9 +70,9 @@
+ } af_equalizer_t;
+ 
+ // 2nd order Band-pass Filter design
+-static void bp2(float* a, float* b, float fc, float q){
++static void bp2(double* a, double* b, double fc, double q){
+   double th= 2.0 * M_PI * fc;
+-  double C = (1.0 - tan(th*q/2.0))/(1.0 + tan(th*q/2.0));
++  double C = (1.0 - tan(th*q/4.0))/(1.0 + tan(th*q/4.0));
+ 
+   a[0] = (1.0 + C) * cos(th);
+   a[1] = -1 * C;
+@@ -89,7 +89,7 @@
+   switch(cmd){
+   case AF_CONTROL_REINIT:{
+     int k =0, i =0;
+-    float F[KM] = CF;
++    double F[KM] = CF;
+ 
+     s->gain_factor=0.0;
+ 
+@@ -103,7 +103,7 @@
+ 
+     // Calculate number of active filters
+     s->K=KM;
+-    while(F[s->K-1] > (float)af->data->rate/2.2)
++    while(F[s->K-1] > (double)af->data->rate/2.2)
+       s->K--;
+ 
+     if(s->K != KM)
+@@ -112,7 +112,7 @@
+ 
+     // Generate filter taps
+     for(k=0;k<s->K;k++)
+-      bp2(s->a[k],s->b[k],F[k]/((float)af->data->rate),Q);
++      bp2(s->a[k],s->b[k],F[k]/((double)af->data->rate),Q);
+ 
+     // Calculate how much this plugin adds to the overall time delay
+     af->delay = 2 * af->data->nch * af->data->bps;
+@@ -209,9 +209,9 @@
+       // Run the filters
+       for(;k<s->K;k++){
+  	// Pointer to circular buffer wq
+- 	register float* wq = s->wq[ci][k];
++ 	double* wq = s->wq[ci][k];
+  	// Calculate output from AR part of current filter
+- 	register float w=yt*s->b[k][0] + wq[0]*s->a[k][0] + wq[1]*s->a[k][1];
++ 	double w=yt*s->b[k][0] + wq[0]*s->a[k][0] + wq[1]*s->a[k][1];
+  	// Calculate output form MA part of current filter
+  	yt+=(w + wq[1]*s->b[k][1])*g[k];
+  	// Update circular buffer

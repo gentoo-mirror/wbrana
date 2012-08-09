@@ -171,6 +171,7 @@ pkg_setup() {
 		ln -s "${EROOT}usr/$(get_libdir)/opengl/global/include/$i.h" "${T}/mesa-symlinks/GL/$i.h" || die
 	done
 	append-cppflags "-I${T}/mesa-symlinks"
+	enewuser xorg -1 /sbin/nologin /dev/null video
 }
 
 src_install() {

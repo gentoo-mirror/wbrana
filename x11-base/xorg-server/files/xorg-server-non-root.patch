@@ -1,0 +1,28 @@
+--- dix/main.c.orig 2012-05-17 19:09:02.000000000 +0200
++++ dix/main.c 2012-07-09 15:56:47.051703025 +0200
+@@ -78,6 +78,8 @@
+ #include <version-config.h>
+ #endif
+ 
++#include <sys/types.h>
++#include <pwd.h>
+ #include <X11/X.h>
+ #include <X11/Xos.h>            /* for unistd.h  */
+ #include <X11/Xproto.h>
+@@ -284,8 +286,15 @@
+ #endif
+ 
+         NotifyParentProcess();
+-
++	 struct passwd passwd1;
++	 struct passwd* Passwd1 = 0;
++	 char buf[4096];
++	 getpwnam_r("xorg", &passwd1, buf, 4096, &Passwd1);setgid(27);
++	 if ((Passwd1 == &passwd1) && (!setuid(passwd1.pw_uid))) {
+         Dispatch();
++	 } else {
++		FatalError("can't setuid to user xorg");
++	 }
+ 
+ #ifdef XQUARTZ
+         /* Let the other threads know the server is no longer running */

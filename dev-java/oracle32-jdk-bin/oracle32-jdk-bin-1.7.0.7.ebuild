@@ -7,7 +7,7 @@ EAPI="4"
 inherit java-vm-2 eutils prefix versionator
 
 # This URIs need to be updated when bumping!
-JDK_URI="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1637583.html"
+JDK_URI="http://www.oracle.com/technetwork/java/javase/downloads/jdk7u7-downloads-1836413.html"
 JCE_URI="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html"
 
 UPDATE="$(get_version_component_range 4)"
@@ -15,7 +15,6 @@ MY_PV="$(get_version_component_range 2)u${UPDATE}"
 S_PV="$(get_version_component_range 1-3)_0${UPDATE}"
 
 AMD64_AT="jdk-${MY_PV}-linux-i586.tar.gz"
-AMD64_DEMOS="jdk-${MY_PV}-linux-i586-demos.tar.gz"
 
 JCE_DIR="UnlimitedJCEPolicy"
 JCE_FILE="${JCE_DIR}JDK7.zip"
@@ -23,15 +22,14 @@ JCE_FILE="${JCE_DIR}JDK7.zip"
 DESCRIPTION="Oracle's Java SE Development Kit"
 HOMEPAGE="http://www.oracle.com/technetwork/java/javase/"
 SRC_URI="
-	amd64? ( ${AMD64_AT}
-		examples? ( ${AMD64_DEMOS} ) )
+	amd64? ( ${AMD64_AT} )
 	jce? ( ${JCE_FILE} )"
 
-LICENSE="Oracle-BCLA-JavaSE examples? ( BSD )"
+LICENSE="Oracle-BCLA-JavaSE"
 SLOT="1.7"
 KEYWORDS="~amd64"
 
-IUSE="+X alsa derby doc examples +fontconfig jce nsplugin pax_kernel +source"
+IUSE="+X alsa derby doc +fontconfig jce nsplugin pax_kernel +source"
 RESTRICT="fetch strip"
 
 RDEPEND="
@@ -69,29 +67,9 @@ pkg_nofetch() {
 		AT="${SOL_SPARC_AT} and ${SOL_SPARCv9_AT}"
 	fi
 
-	if use x86; then
-		DEMOS=${X86_DEMOS}
-	elif use amd64; then
-		DEMOS=${AMD64_DEMOS}
-	elif use x86-solaris; then
-		DEMOS=${SOL_X86_DEMOS}
-	elif use x64-solaris; then
-		DEMOS="${SOL_X86_DEMOS} and ${SOL_AMD64_DEMOS}"
-	elif use sparc-solaris; then
-		DEMOS=${SOL_SPARC_AT}
-	elif use sparc64-solaris; then
-		DEMOS="${SOL_SPARC_AT_DEMOS} and ${SOL_SPARCv9_DEMOS}"
-	fi
-
 	einfo "Please download ${AT} from:"
 	einfo "${JDK_URI}"
 	einfo "and move it to ${DISTDIR}"
-
-	if use examples; then
-		einfo "Also download ${DEMOS} from:"
-		einfo "${JDK_URI}"
-		einfo "and move it to ${DISTDIR}"
-	fi
 
 	if use jce; then
 		einfo "Also download ${JCE_FILE} from:"
@@ -147,10 +125,6 @@ src_install() {
 
 	if use derby; then
 		cp -pPR db "${ddest}" || die
-	fi
-
-	if use examples; then
-		cp -pPR demo sample "${ddest}" || die
 	fi
 
 	# Remove empty dirs we might have copied

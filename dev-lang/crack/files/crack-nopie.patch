@@ -1,0 +1,11 @@
+--- builder/llvm/Native.cc.orig	2012-09-07 15:25:12.000000000 +0200
++++ builder/llvm/Native.cc	2012-09-11 15:02:20.054417417 +0200
+@@ -91,6 +91,8 @@
+   if (i != o->optionMap.end()) {
+       args.push_back("-fPIC");
+       args.push_back("-pie");
++  } else {
++      args.push_back("--no-pie");
+   }
+ 
+   if (is64Bit)

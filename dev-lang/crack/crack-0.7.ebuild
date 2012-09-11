@@ -9,11 +9,26 @@ SLOT="0"
 LICENSE="MPL-2.0"
 
 RDEPEND="
+	app-arch/bzip2
+	dev-libs/expat
 	dev-libs/libffi
 	dev-libs/libpcre
 	media-libs/alsa-lib
+	media-libs/fontconfig
+	media-libs/freetype
+	media-libs/libpng
+	media-libs/libsdl
 	sys-devel/llvm
+	sys-libs/zlib
 	virtual/opengl
+	x11-libs/gtk+:2
+	x11-libs/cairo
+	x11-libs/libX11
+	x11-libs/libXau
+	x11-libs/libXdmcp
+	x11-libs/libXrender
+	x11-libs/libxcb
+	x11-libs/pixman
 	"
 DEPEND="
 	${RDEPEND}

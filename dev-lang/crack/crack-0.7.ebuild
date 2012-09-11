@@ -8,6 +8,19 @@ KEYWORDS="~amd64"
 SLOT="0"
 LICENSE="MPL-2.0"
 
+RDEPEND="
+	dev-libs/libffi
+	dev-libs/libpcre
+	media-libs/alsa-lib
+	sys-devel/llvm
+	virtual/opengl
+	"
+DEPEND="
+	${RDEPEND}
+	sys-devel/gcc
+	virtual/pkgconfig
+	"
+
 src_prepare() {
 	epatch "${FILESDIR}/crack-nopie.patch"
 }

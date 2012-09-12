@@ -41,10 +41,10 @@ src_prepare() {
 }
 
 src_compile() {
-	make -j2 CXXFLAGS="-g -O3 -march=native -fomit-frame-pointer -funroll-loops --param max-unrolled-insns=64 -fno-PIE -fPIC"
+	emake CXXFLAGS="-g -O3 -march=native -fomit-frame-pointer -funroll-loops --param max-unrolled-insns=64 -fno-PIE -fPIC"
 	pax-mark m .libs/crack
 }
 
 src_install() {
-	make DESTDIR="${D}" install
+	emake -j1 DESTDIR="${D}" install
 }

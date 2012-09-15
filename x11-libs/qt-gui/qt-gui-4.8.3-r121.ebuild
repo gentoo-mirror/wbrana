@@ -1,17 +1,17 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-gui/qt-gui-4.8.2.ebuild,v 1.10 2012/07/19 21:01:58 maekke Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-gui/qt-gui-4.8.3.ebuild,v 1.1 2012/09/14 07:49:53 yngwin Exp $
 
 EAPI=4
 
 inherit eutils qt4-build
 
-DESCRIPTION="Qt GUI with CXXFLAGS fix"
+DESCRIPTION="The GUI module for the Qt toolkit"
 SLOT="4"
 if [[ ${QT4_BUILD_TYPE} == live ]]; then
 	KEYWORDS=""
 else
-	KEYWORDS="~alpha amd64 arm hppa ~ia64 ~mips ppc ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+accessibility cups dbus egl gif +glib gtkstyle mng nas nis qt3support tiff trace xinerama +xv"
 
@@ -26,8 +26,8 @@ RDEPEND="
 	media-libs/libpng:0
 	sys-libs/zlib
 	virtual/jpeg
-	~x11-libs/qt-core-${PV}[aqua=,c++0x=,qpa=,debug=,glib=,qt3support=]
-	~x11-libs/qt-script-${PV}[aqua=,c++0x=,qpa=,debug=]
+	~x11-libs/qt-core-${PV}[aqua=,c++0x=,debug=,glib=,qt3support=]
+	~x11-libs/qt-script-${PV}[aqua=,c++0x=,debug=]
 	!aqua? (
 		x11-libs/libICE
 		x11-libs/libSM
@@ -41,9 +41,10 @@ RDEPEND="
 		xv? ( x11-libs/libXv )
 	)
 	cups? ( net-print/cups )
-	dbus? ( ~x11-libs/qt-dbus-${PV}[aqua=,c++0x=,qpa=,debug=] )
+	dbus? ( ~x11-libs/qt-dbus-${PV}[aqua=,c++0x=,debug=] )
 	egl? ( media-libs/mesa[egl] )
-	gtkstyle? ( x11-libs/gtk+:2[aqua=] )
+	gtkstyle? ( x11-libs/gtk+:2[aqua=]
+		!x11-libs/cairo[qt4] )
 	mng? ( >=media-libs/libmng-1.0.9 )
 	nas? ( >=media-libs/nas-1.5 )
 	tiff? ( media-libs/tiff:0 )
@@ -56,36 +57,14 @@ DEPEND="${RDEPEND}
 		xv? ( x11-proto/videoproto )
 	)
 "
-PDEPEND="qt3support? ( ~x11-libs/qt-qt3support-${PV}[aqua=,c++0x=,debug=,qpa=] )"
+PDEPEND="qt3support? ( ~x11-libs/qt-qt3support-${PV}[aqua=,c++0x=,debug=] )"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-4.7.3-cups.patch"
-	"${FILESDIR}/${PV}-qatomic-x32.patch"
 	"${FILESDIR}/qt-cxxflags.patch"
 )
 
 pkg_setup() {
-	# this belongs to pkg_pretend, we have to upgrade to EAPI 4 :)
-	# was planning to use a dep, but to reproduce this you have to
-	# clean-emerge qt-gui[gtkstyle] while having cairo[qt4] installed.
-	# no need to restrict normal first time users for that :)
-	if use gtkstyle && ! has_version x11-libs/qt-gui && has_version x11-libs/cairo[qt4]; then
-		echo
-		eerror "When building qt-gui[gtkstyle] from scratch with cairo present,"
-		eerror "cairo must have the qt4 use flag disabled, otherwise the gtk"
-		eerror "style cannot be built."
-		ewarn
-		eerror "You have the following options:"
-		eerror "  - rebuild cairo with -qt4 USE"
-		eerror "  - build qt-gui with -gtkstyle USE"
-		ewarn
-		eerror "After you successfully install qt-gui, you'll be able to"
-		eerror "re-enable the disabled use flag and/or reinstall cairo."
-		ewarn
-		echo
-		die "can't build ${PN} with USE=gtkstyle if cairo has 'qt4' USE flag enabled"
-	fi
-
 	QT4_TARGET_DIRECTORIES="
 		src/gui
 		src/scripttools
@@ -200,7 +179,7 @@ src_install() {
 	# which are located under tools/designer/src/lib/*
 	# So instead of installing both, we create the private folder
 	# and drop tools/designer/src/lib/* headers in it.
-	if use aqua && [[ ${CHOST##*-darwin} -ge 9 ]] ; then
+	if use aqua && [[ ${CHOST##*-darwin} -ge 9 ]]; then
 		insinto "${QTLIBDIR#${EPREFIX}}"/QtDesigner.framework/Headers/private/
 	else
 		insinto "${QTHEADERDIR#${EPREFIX}}"/QtDesigner/private/
@@ -209,14 +188,14 @@ src_install() {
 	doins "${S}"/tools/designer/src/lib/sdk/*
 
 	# install private headers
-	if use aqua && [[ ${CHOST##*-darwin} -ge 9 ]] ; then
+	if use aqua && [[ ${CHOST##*-darwin} -ge 9 ]]; then
 		insinto "${QTLIBDIR#${EPREFIX}}"/QtGui.framework/Headers/private/
 	else
 		insinto "${QTHEADERDIR#${EPREFIX}}"/QtGui/private
 	fi
 	find "${S}"/src/gui -type f -name '*_p.h' -exec doins {} +
 
-	if use aqua && [[ ${CHOST##*-darwin} -ge 9 ]] ; then
+	if use aqua && [[ ${CHOST##*-darwin} -ge 9 ]]; then
 		# rerun to get links to headers right
 		fix_includes
 	fi
@@ -228,23 +207,19 @@ src_install() {
 
 	doicon tools/designer/src/designer/images/designer.png \
 		tools/linguist/linguist/images/icons/linguist-128-32.png
+	use dbus && doicon tools/qdbus/qdbusviewer/images/qdbusviewer-128.png
 	make_desktop_entry designer Designer designer 'Qt;Development;GUIDesigner'
 	make_desktop_entry linguist Linguist linguist-128-32 'Qt;Development;GUIDesigner'
+
+	# see bug 388551
+	use gtkstyle && doenvd "${FILESDIR}"/44qt4-gtkstyle
 }
 
 pkg_postinst() {
-	# raster is the default graphicssystems, set it if first install
+	# raster is the default graphicssystems, set it on first install
 	eselect qtgraphicssystem set raster --use-old
-	elog "Starting with Qt 4.8.0, you may choose the active Qt Graphics System"
+
+	elog "Starting with Qt 4.8, you may choose the active Qt Graphics System"
 	elog "by using a new eselect module called qtgraphicssystem."
-	elog "Run"
-	elog "  eselect qtgraphicssystem"
-	elog "for more information."
-	if use gtkstyle ; then
-		# see bug 388551
-		elog "For Qt's GTK style to work, you need to either export"
-		elog "the following variable into your environment:"
-		elog '  GTK2_RC_FILES="$HOME/.gtkrc-2.0"'
-		elog "or alternatively install gnome-base/libgnomeui"
-	fi
+	elog "Run \`eselect qtgraphicssystem\` for more information."
 }

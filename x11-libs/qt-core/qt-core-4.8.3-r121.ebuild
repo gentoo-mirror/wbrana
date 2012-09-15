@@ -1,17 +1,17 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-core/qt-core-4.8.2.ebuild,v 1.9 2012/07/19 20:49:01 maekke Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-core/qt-core-4.8.3.ebuild,v 1.1 2012/09/14 07:33:26 yngwin Exp $
 
 EAPI=4
 
 inherit qt4-build
 
-DESCRIPTION="Qt Core with CXXFLAGS and ccache fixes"
+DESCRIPTION="The Qt toolkit is a comprehensive C++ application development framework"
 SLOT="4"
 if [[ ${QT4_BUILD_TYPE} == live ]]; then
 	KEYWORDS=""
 else
-	KEYWORDS="~alpha amd64 arm hppa ~ia64 ~mips ppc ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+glib iconv icu optimized-qmake qt3support ssl"
 
@@ -25,14 +25,13 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 PDEPEND="
-	qt3support? ( ~x11-libs/qt-gui-${PV}[aqua=,c++0x=,debug=,glib=,qpa=,qt3support] )
+	qt3support? ( ~x11-libs/qt-gui-${PV}[aqua=,c++0x=,debug=,glib=,qt3support] )
 "
 
 PATCHES=(
 	"${FILESDIR}/moc-workaround-for-boost-1.48.patch"
-	"${FILESDIR}/${PV}-qatomic-x32.patch"
-	"${FILESDIR}/qt-cxxflags.patch"
-	"${FILESDIR}/qt-ccache.patch"
+        "${FILESDIR}/qt-cxxflags.patch"
+        "${FILESDIR}/qt-ccache.patch"
 )
 
 pkg_setup() {

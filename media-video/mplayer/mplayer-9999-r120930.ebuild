@@ -415,7 +415,6 @@ src_configure() {
 	done
 	use jpeg2k || myconf+=" --disable-libopenjpeg"
 	if use vorbis || use tremor; then
-		use tremor || myconf+=" --disable-tremor-internal"
 		use vorbis || myconf+=" --disable-libvorbis"
 	else
 		myconf+="

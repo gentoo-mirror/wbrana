@@ -7,7 +7,7 @@ EAPI="4"
 inherit java-vm-2 eutils prefix versionator
 
 # This URIs need to be updated when bumping!
-JDK_URI="http://www.oracle.com/technetwork/java/javase/downloads/jdk7u7-downloads-1836413.html"
+JDK_URI="http://www.oracle.com/technetwork/java/javase/downloads/jdk7u9-downloads-1859576.html"
 JCE_URI="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html"
 
 UPDATE="$(get_version_component_range 4)"

@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-core/qt-core-4.8.3.ebuild,v 1.1 2012/09/14 07:33:26 yngwin Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-core/qt-core-4.8.4.ebuild,v 1.1 2012/12/05 03:14:14 yngwin Exp $
 
 EAPI=4
 
@@ -13,7 +13,7 @@ if [[ ${QT4_BUILD_TYPE} == live ]]; then
 else
 	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
 fi
-IUSE="+glib iconv icu optimized-qmake qt3support ssl"
+IUSE="+glib iconv icu qt3support ssl"
 
 DEPEND="
 	sys-libs/zlib
@@ -25,13 +25,13 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 PDEPEND="
-	qt3support? ( ~x11-libs/qt-gui-${PV}[aqua=,c++0x=,debug=,glib=,qt3support] )
+	qt3support? ( ~x11-libs/qt-gui-${PV}[aqua=,debug=,glib=,qt3support] )
 "
 
 PATCHES=(
 	"${FILESDIR}/moc-workaround-for-boost-1.48.patch"
-        "${FILESDIR}/qt-cxxflags.patch"
-        "${FILESDIR}/qt-ccache.patch"
+	"${FILESDIR}/qt-ccache.patch"
+	"${FILESDIR}/qt-cxxflags.patch"
 )
 
 pkg_setup() {
@@ -89,6 +89,13 @@ src_prepare() {
 		"${S}/qmake/Makefile.unix" || die "sed qmake/Makefile.unix CXXFLAGS failed"
 	sed -i -e "s:LFLAGS.*=:LFLAGS=${LDFLAGS} :" \
 		"${S}/qmake/Makefile.unix" || die "sed qmake/Makefile.unix LDFLAGS failed"
+
+	# bug 427782
+	sed -i -e "/^CPPFLAGS/s/-g//" \
+		"${S}/qmake/Makefile.unix" || die "sed qmake/Makefile.unix CPPFLAGS failed"
+	sed -i -e "s/setBootstrapVariable QMAKE_CFLAGS_RELEASE/QMakeVar set QMAKE_CFLAGS_RELEASE/" \
+		-e "s/setBootstrapVariable QMAKE_CXXFLAGS_RELEASE/QMakeVar set QMAKE_CXXFLAGS_RELEASE/" \
+		"${S}/configure" || die "sed configure setBootstrapVariable failed"
 }
 
 src_configure() {
@@ -102,7 +109,6 @@ src_configure() {
 		$(qt_use glib)
 		$(qt_use iconv)
 		$(qt_use icu)
-		$(qt_use optimized-qmake)
 		$(use ssl && echo -openssl-linked || echo -no-openssl)
 		$(qt_use qt3support)"
 
@@ -167,7 +173,7 @@ src_install() {
 	install_qconfigs
 
 	# remove .la files
-	find "${D}${QTLIBDIR}" -name "*.la" -print0 | xargs -0 rm
+	prune_libtool_files
 
 	keepdir "${QTSYSCONFDIR#${EPREFIX}}"
 

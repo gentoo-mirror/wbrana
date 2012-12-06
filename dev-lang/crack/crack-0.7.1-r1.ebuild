@@ -18,7 +18,7 @@ RDEPEND="
 	media-libs/freetype
 	media-libs/libpng
 	media-libs/libsdl
-	sys-devel/llvm
+	=sys-devel/llvm-3.1*
 	sys-libs/zlib
 	virtual/opengl
 	x11-libs/gtk+:2

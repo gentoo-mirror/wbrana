@@ -22,8 +22,8 @@ UPDATE="$(get_version_component_range 4)"
 MY_PV="$(get_version_component_range 2)u${UPDATE}"
 S="${WORKDIR}/jdk$(get_version_component_range 1-3)_${UPDATE}"
 # for when oracle messes with us again.
-DEMOS_PV="${MY_PV}"
-DEMOS_S="${S}"
+DEMOS_PV="$(get_version_component_range 2)u10"
+DEMOS_S="${WORKDIR}/jdk$(get_version_component_range 1-3)_10"
 
 at_amd64="jdk-${MY_PV}-linux-i586.tar.gz"
 

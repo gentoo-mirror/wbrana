@@ -112,6 +112,7 @@ PATCHES=(
 	"${UPSTREAMED_PATCHES[@]}"
 	"${FILESDIR}"/${PN}-1.12-disable-acpi.patch
 	"${FILESDIR}"/${PN}-1.13-ia64-asm.patch
+	"${FILESDIR}"/xorg-server-disable-iopl.patch
 	"${FILESDIR}"/xorg-server-non-root.patch
 )
 

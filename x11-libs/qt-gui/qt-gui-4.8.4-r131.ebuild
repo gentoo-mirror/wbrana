@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-gui/qt-gui-4.8.4.ebuild,v 1.1 2012/12/05 03:20:44 yngwin Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-gui/qt-gui-4.8.4-r1.ebuild,v 1.4 2013/02/09 20:11:58 ago Exp $
 
 EAPI=4
 
@@ -11,7 +11,7 @@ SLOT="4"
 if [[ ${QT4_BUILD_TYPE} == live ]]; then
 	KEYWORDS=""
 else
-	KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 ~arm ~hppa ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+accessibility cups dbus egl gif +glib gtkstyle mng nas nis qt3support tiff trace xinerama +xv"
 
@@ -60,6 +60,7 @@ PDEPEND="qt3support? ( ~x11-libs/qt-qt3support-${PV}[aqua=,debug=] )"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-4.7.3-cups.patch"
+	"${FILESDIR}/CVE-2013-0254.patch"
 	"${FILESDIR}/qt-cxxflags.patch"
 )
 
@@ -145,7 +146,7 @@ src_configure() {
 		$(qt_use xv xvideo)"
 
 	myconf+="
-		-system-libpng -system-libjpeg
+		-system-libpng -system-libjpeg -system-zlib
 		-no-sql-mysql -no-sql-psql -no-sql-ibase -no-sql-sqlite -no-sql-sqlite2 -no-sql-odbc
 		-sm -xshape -xsync -xcursor -xfixes -xrandr -xrender -mitshm -xinput -xkb
 		-fontconfig -no-svg -no-webkit -no-phonon -no-opengl"
@@ -164,7 +165,7 @@ src_configure() {
 
 src_install() {
 	QCONFIG_ADD="
-		mitshm x11sm xcursor xfixes xinput xkb xrandr xrender xshape xsync
+		mitshm tablet x11sm xcursor xfixes xinput xkb xrandr xrender xshape xsync
 		fontconfig gif png system-png jpeg system-jpeg
 		$(usev accessibility)
 		$(usev cups)
@@ -185,7 +186,7 @@ src_install() {
 			$(use nas && echo QT_NAS)
 			$(use nis && echo QT_NIS)
 			$(use tiff && echo QT_IMAGEFORMAT_TIFF)
-			QT_SESSIONMANAGER QT_SHAPE QT_XCURSOR QT_XFIXES
+			QT_SESSIONMANAGER QT_SHAPE QT_TABLET QT_XCURSOR QT_XFIXES
 			$(use xinerama && echo QT_XINERAMA)
 			QT_XINPUT QT_XKB QT_XRANDR QT_XRENDER QT_XSYNC
 			$(use xv && echo QT_XVIDEO)"
@@ -235,16 +236,13 @@ src_install() {
 }
 
 pkg_postinst() {
-	# raster is the default graphicssystems, set it on first install
-	eselect qtgraphicssystem set raster --use-old
+	qt4-build_pkg_postinst
 
-	elog "Starting with Qt 4.8, you may choose the active Qt Graphics System"
-	elog "by using a new eselect module called qtgraphicssystem."
-	elog "Run \`eselect qtgraphicssystem\` for more information."
+	# raster is the default graphicssystem, set it on first install
+	eselect qtgraphicssystem set raster --use-old
 
 	if use gtkstyle; then
 		# see bug 388551
-		elog
 		elog "For Qt's GTK style to work, you need to either export"
 		elog "the following variable into your environment:"
 		elog '  GTK2_RC_FILES="$HOME/.gtkrc-2.0"'

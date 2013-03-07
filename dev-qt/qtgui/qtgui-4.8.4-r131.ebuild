@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-gui/qt-gui-4.8.4-r1.ebuild,v 1.11 2013/02/12 23:59:29 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-qt/qtgui/qtgui-4.8.4-r1.ebuild,v 1.1 2013/03/02 15:27:36 yngwin Exp $
 
 EAPI=4
 
@@ -27,8 +27,8 @@ RDEPEND="
 	media-libs/libpng:0
 	sys-libs/zlib
 	virtual/jpeg
-	~x11-libs/qt-core-${PV}[aqua=,debug=,glib=,qt3support=]
-	~x11-libs/qt-script-${PV}[aqua=,debug=]
+	~dev-qt/qtcore-${PV}[aqua=,debug=,glib=,qt3support=]
+	~dev-qt/qtscript-${PV}[aqua=,debug=]
 	!aqua? (
 		x11-libs/libICE
 		x11-libs/libSM
@@ -42,7 +42,7 @@ RDEPEND="
 		xv? ( x11-libs/libXv )
 	)
 	cups? ( net-print/cups )
-	dbus? ( ~x11-libs/qt-dbus-${PV}[aqua=,debug=] )
+	dbus? ( ~dev-qt/qtdbus-${PV}[aqua=,debug=] )
 	egl? ( media-libs/mesa[egl] )
 	gtkstyle? (
 		x11-libs/cairo[-qt4]
@@ -60,7 +60,7 @@ DEPEND="${RDEPEND}
 		xv? ( x11-proto/videoproto )
 	)
 "
-PDEPEND="qt3support? ( ~x11-libs/qt-qt3support-${PV}[aqua=,debug=] )"
+PDEPEND="qt3support? ( ~dev-qt/qt3support-${PV}[aqua=,debug=] )"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-4.7.3-cups.patch"

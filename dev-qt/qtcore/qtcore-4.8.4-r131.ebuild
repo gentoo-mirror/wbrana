@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/qt-core/qt-core-4.8.4-r4.ebuild,v 1.1 2013/02/15 10:20:02 pesa Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-qt/qtcore/qtcore-4.8.4-r4.ebuild,v 1.2 2013/03/03 03:31:54 pesa Exp $
 
 EAPI=5
 
@@ -21,11 +21,10 @@ DEPEND="
 	icu? ( >=dev-libs/icu-49:= )
 	ssl? ( dev-libs/openssl )
 	!<x11-libs/cairo-1.10.2-r2
-	!x11-libs/qt:4
 "
 RDEPEND="${DEPEND}"
 PDEPEND="
-	qt3support? ( ~x11-libs/qt-gui-${PV}[aqua=,debug=,glib=,qt3support] )
+	qt3support? ( ~dev-qt/qtgui-${PV}[aqua=,debug=,glib=,qt3support] )
 "
 
 PATCHES=(
@@ -34,8 +33,8 @@ PATCHES=(
 	"${FILESDIR}/blacklist-mis-issued-Turktrust-certs.patch"
 	"${FILESDIR}/CVE-2013-0254.patch"
 	"${FILESDIR}/fix-call-to-QMetaObject-metaCall-from-updateProperty.patch"
-    "${FILESDIR}/qt-ccache.patch"
-    "${FILESDIR}/qt-cxxflags.patch"
+	"${FILESDIR}/qt-ccache.patch"
+	"${FILESDIR}/qt-cxxflags.patch"
 )
 
 pkg_setup() {

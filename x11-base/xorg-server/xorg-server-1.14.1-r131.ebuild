@@ -1,15 +1,17 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-base/xorg-server/xorg-server-1.13.1.ebuild,v 1.13 2013/01/07 09:40:45 chithanh Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-base/xorg-server/xorg-server-1.14.1.ebuild,v 1.1 2013/04/17 22:47:56 chithanh Exp $
 
-EAPI=4
+EAPI=5
 
 XORG_DOC=doc
-inherit eutils xorg-2 multilib versionator flag-o-matic user
+XORG_EAUTORECONF=yes
+inherit xorg-2 multilib versionator flag-o-matic
 EGIT_REPO_URI="git://anongit.freedesktop.org/git/xorg/xserver"
 
 DESCRIPTION="X.Org X servers"
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 sh sparc x86 ~amd64-fbsd ~x86-fbsd"
+SLOT="0/${PV}"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~arm-linux ~x86-linux"
 
 IUSE_SERVERS="dmx kdrive xnest xorg xvfb"
 IUSE="${IUSE_SERVERS} ipv6 minimal nptl selinux +suid tslib +udev"
@@ -27,7 +29,7 @@ RDEPEND=">=app-admin/eselect-opengl-1.0.8
 	>=x11-libs/libXdmcp-1.0.2
 	>=x11-libs/libXfont-1.4.2
 	>=x11-libs/libxkbfile-1.0.4
-	>=x11-libs/pixman-0.21.8
+	>=x11-libs/pixman-0.27.2
 	>=x11-libs/xtrans-1.2.2
 	>=x11-misc/xbitmaps-1.0.1
 	>=x11-misc/xkeyboard-config-2.4.1-r3
@@ -66,7 +68,7 @@ DEPEND="${RDEPEND}
 	>=x11-proto/fixesproto-5.0
 	>=x11-proto/fontsproto-2.0.2
 	>=x11-proto/glproto-1.4.16
-	>=x11-proto/inputproto-2.1.99.3
+	>=x11-proto/inputproto-2.2.99.1
 	>=x11-proto/kbproto-1.0.3
 	>=x11-proto/randrproto-1.4.0
 	>=x11-proto/recordproto-1.13.99.1
@@ -111,8 +113,6 @@ REQUIRED_USE="!minimal? (
 PATCHES=(
 	"${UPSTREAMED_PATCHES[@]}"
 	"${FILESDIR}"/${PN}-1.12-disable-acpi.patch
-	"${FILESDIR}"/${PN}-1.13-ia64-asm.patch
-	"${FILESDIR}"/xorg-server-disable-iopl.patch
 	"${FILESDIR}"/xorg-server-non-root.patch
 )
 
@@ -123,7 +123,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	enewuser xorg -1 /sbin/nologin /dev/null video
+    enewuser xorg -1 /sbin/nologin /dev/null video
 }
 
 src_configure() {
@@ -210,10 +210,8 @@ pkg_postinst() {
 		ewarn "of module version mismatch errors, this is your problem."
 
 		echo
-		ewarn "You can generate a list of all installed packages in the x11-drivers"
+		ewarn "You can rebuild all installed packages in the x11-drivers"
 		ewarn "category using this command:"
-		ewarn "	emerge portage-utils; qlist -I -C x11-drivers/"
-		ewarn "or using sets from portage-2.2:"
 		ewarn "	emerge @x11-module-rebuild"
 	fi
 
@@ -251,4 +249,3 @@ server_based_install() {
 			"${ED}"/usr/share/man/man1/Xserver.1x
 	fi
 }
-

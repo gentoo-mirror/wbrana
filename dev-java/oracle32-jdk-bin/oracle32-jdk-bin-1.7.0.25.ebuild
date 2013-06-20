@@ -17,13 +17,13 @@ JCE_URI="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-
 JDK_AVAILABLE=(amd64)
 DEMOS_AVAILABLE=(amd64)
 
-FX_VERSION="2_2_21"
+FX_VERSION="2_2_25"
 UPDATE="$(get_version_component_range 4)"
 MY_PV="$(get_version_component_range 2)u${UPDATE}"
 S="${WORKDIR}/jdk$(get_version_component_range 1-3)_${UPDATE}"
 # for when oracle messes with us again.
-DEMOS_PV="$(get_version_component_range 2)u21"
-DEMOS_S="${WORKDIR}/jdk$(get_version_component_range 1-3)_21"
+DEMOS_PV="$(get_version_component_range 2)u25"
+DEMOS_S="${WORKDIR}/jdk$(get_version_component_range 1-3)_25"
 
 at_amd64="jdk-${MY_PV}-linux-i586.tar.gz"
 
